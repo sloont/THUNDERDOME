@@ -1,22 +1,26 @@
-import * as THREE from 'three'
-import Omni from './Omni';
-import Dreamer from './Dreamer';
-
-
 export const THUNDERDOME_SIZE = 10;
 
+import * as THREE from 'three'
+import Omni from './Omni';
+import Dream from './Dream';
+import dreams from '../dreams/dreams';
+
+
+
 export class Thunderdome {
-    public dreamer: Dreamer;
+    readonly dreams: Record<string, Dream>;
     public omni: Omni;
+    public dream: Dream;
     private _renderer: THREE.WebGLRenderer;
     constructor () {
         /**
          * scene management
          *
-         * isolate into its own controller class for changing
          * premade scenes and (eventually) keeping physics separate
          */
-        this.dreamer = new Dreamer(this);
+        this.dreams = dreams;
+        this.dream = dreams.default;
+        this.dream.init();
         /**
          * camera controls and raycast picking
          *
@@ -45,7 +49,7 @@ export class Thunderdome {
     }
 
     animate(_time: number): void {
-        this._renderer.render(this.dreamer.scene, this.omni.camera);
+        this._renderer.render(this.dream.scene, this.omni.camera);
     }
 
     _onWindowResize(): void {
