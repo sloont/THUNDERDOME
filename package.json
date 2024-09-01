@@ -1,0 +1,19 @@
+{
+  "name": "thunderdome",
+  "version": "1.0.0",
+  "description": "cagematchin'",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "sloont",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/three": "^0.168.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  },
+  "dependencies": {
+    "three": "^0.168.0"
+  }
+}
