@@ -1,33 +1,29 @@
-import { PALETTE } from '../utils/colors';
 import * as THREE from 'three'
+import Omni from './Omni';
+import Dreamer from './Dreamer';
+
+
+export const THUNDERDOME_SIZE = 10;
 
 export class Thunderdome {
-    private _scene: THREE.Scene;
-    private _camera: THREE.PerspectiveCamera;
+    public dreamer: Dreamer;
+    public omni: Omni;
     private _renderer: THREE.WebGLRenderer;
     constructor () {
         /**
-         * core scene
+         * scene management
          *
-         * for now this is hard-coded as one single scene
-         * no support for multiple (yet?)
+         * isolate into its own controller class for changing
+         * premade scenes and (eventually) keeping physics separate
          */
-        this._scene = new THREE.Scene();
-        this._scene.background = PALETTE.BACKGROUND;
+        this.dreamer = new Dreamer(this);
         /**
          * camera controls and raycast picking
          *
          * on the fence about delegating this to its own class,
          * but in early concepts, the complexity grew quickly
          */
-        this._camera = new THREE.PerspectiveCamera(
-            50,
-            window.innerWidth / window.innerHeight,
-            1,
-            1000
-        );
-        this._camera.position.set(500, 300, 1000);
-        this._camera.lookAt(0, 0, 0);
+        this.omni = new Omni(this);
         /**
          * three.js WebGLRenderer instance
          *
@@ -49,11 +45,10 @@ export class Thunderdome {
     }
 
     animate(_time: number): void {
-        this._renderer.render(this._scene, this._camera);
+        this._renderer.render(this.dreamer.scene, this.omni.camera);
     }
 
     _onWindowResize(): void {
-        console.log('test whether we need binding');
         this._renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
