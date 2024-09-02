@@ -1,6 +1,10 @@
 import * as THREE from 'three'
 import Dream from '../core/Dream';
-import { THUNDERDOME_SIZE } from '../core/Thunderdome';
+import {
+    THUNDERDOME_TILES,
+    THUNDERDOME_TILE_SIZE,
+    THUNDERDOME_SIZE
+} from '../core/Thunderdome';
 import { PALETTE } from '../utils/colors';
 
 const testspace = new Dream();
@@ -8,19 +12,31 @@ const testspace = new Dream();
 testspace.init = function (): void {
     testspace.scene.background = PALETTE.BACKGROUND;
 
-    const floorGeometry = new THREE.PlaneGeometry(1000, 1000)
+    const floorGeometry = new THREE.PlaneGeometry(THUNDERDOME_SIZE, THUNDERDOME_SIZE)
         .rotateX(-Math.PI / 2);
     const floorMaterial = new THREE.MeshBasicMaterial({
         color: PALETTE.TERTIARY,
-        // opacity: 0.15,
-        // transparent: true
-        visible: false
+        opacity: 0.15,
+        transparent: true
+        // visible: false
     });
     const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
     testspace.scene.add(floorMesh);
 
+    // tile geometry (should relocate)
+    const hoverGeometry = new THREE.BoxGeometry(
+        THUNDERDOME_TILE_SIZE,
+        THUNDERDOME_TILE_SIZE,
+        THUNDERDOME_TILE_SIZE
+    );
+    const hoverMaterial = new THREE.MeshBasicMaterial({
+        color: PALETTE.SECONDARY,
+        opacity: 0.3,
+        transparent: true,
+    });
+
     // grid
-    const gridHelper = new THREE.GridHelper(1000, THUNDERDOME_SIZE, PALETTE.HIGHLIGHT, PALETTE.HIGHLIGHT);
+    const gridHelper = new THREE.GridHelper(THUNDERDOME_SIZE, THUNDERDOME_TILES, PALETTE.HIGHLIGHT, PALETTE.HIGHLIGHT);
     testspace.scene.add(gridHelper);
 
     // lighting
