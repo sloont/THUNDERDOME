@@ -11,10 +11,18 @@ import dreams from '../dreams/dreams';
 
 export class Thunderdome {
     private _renderer: THREE.WebGLRenderer;
-    readonly dreams: Record<string, Dream>;
+    readonly dreams: Record<string, {name: string, init: (this:Dream)=> void}>;
     public omni: Omni;
     public dream: Dream;
+    public scene: THREE.Scene;
     constructor () {
+        /**
+         * scene
+         *
+         * Dreams will run mutually exclusive so we can share
+         */
+        this.scene = new THREE.Scene();
+
         /**
          * three.js WebGLRenderer instance
          *
@@ -32,8 +40,7 @@ export class Thunderdome {
          * premade scenes and (eventually) keeping physics separate
          */
         this.dreams = dreams;
-        this.dream = dreams.default;
-        this.dream.init();
+        this.dream = new Dream(this, this.dreams.default.name, this.dreams.default.init);
         /**
          * camera controls and raycast picking
          *

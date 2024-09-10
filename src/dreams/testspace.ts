@@ -7,10 +7,9 @@ import {
 } from '../core/Thunderdome';
 import { PALETTE } from '../utils/colors';
 
-const testspace = new Dream();
-
-testspace.init = function (): void {
-    testspace.scene.background = PALETTE.BACKGROUND;
+export const name = 'testspace';
+export const init = function (this: Dream): void {
+    this.scene.background = PALETTE.BACKGROUND;
 
     const floorGeometry = new THREE.PlaneGeometry(THUNDERDOME_SIZE, THUNDERDOME_SIZE)
         .rotateX(-Math.PI / 2);
@@ -21,7 +20,7 @@ testspace.init = function (): void {
         // visible: false
     });
     const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-    testspace.scene.add(floorMesh);
+    this.scene.add(floorMesh);
 
     // tile geometry (should relocate)
     const hoverGeometry = new THREE.BoxGeometry(
@@ -37,15 +36,13 @@ testspace.init = function (): void {
 
     // grid
     const gridHelper = new THREE.GridHelper(THUNDERDOME_SIZE, THUNDERDOME_TILES, PALETTE.HIGHLIGHT, PALETTE.HIGHLIGHT);
-    testspace.scene.add(gridHelper);
+    this.scene.add(gridHelper);
 
     // lighting
     const ambientLight = new THREE.AmbientLight( PALETTE.HIGHLIGHT, 2 );
-    testspace.scene.add( ambientLight );
+    this.scene.add( ambientLight );
 
     const directionalLight = new THREE.DirectionalLight( PALETTE.HIGHLIGHT, 5 );
     directionalLight.position.set( 1, 0.75, 0.5 ).normalize();
-    testspace.scene.add( directionalLight );
+    this.scene.add( directionalLight );
 }
-
-export default testspace;
