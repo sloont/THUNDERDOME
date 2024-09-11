@@ -1,7 +1,9 @@
-import * as TESTSPACE from "./testspace";
-const defaultDream = TESTSPACE;
-const dreams = {
-    default: { name: defaultDream.name, init: defaultDream.init },
-    [TESTSPACE.name]: { name: TESTSPACE.name, init: TESTSPACE.init },
+import * as TESTSPACE from './Testspace';
+const DefaultDream = TESTSPACE.Construct;
+
+const DREAMS = {
+    default: DefaultDream,
+    [TESTSPACE.dreamId]: TESTSPACE.Construct,
 }
-export default dreams;
+
+export default DREAMS;

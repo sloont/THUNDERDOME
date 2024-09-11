@@ -5,13 +5,13 @@ export const THUNDERDOME_SIZE = THUNDERDOME_TILES * THUNDERDOME_TILE_SIZE;
 import * as THREE from 'three'
 import Omni from './Omni';
 import Dream from './Dream';
-import dreams from '../dreams/dreams';
+import DREAMS from '../dreams/DREAMS';
 
 
 
 export class Thunderdome {
     private _renderer: THREE.WebGLRenderer;
-    readonly dreams: Record<string, {name: string, init: (this:Dream)=> void}>;
+    readonly dreams: Record<string, typeof Dream>;
     public omni: Omni;
     public dream: Dream;
     public scene: THREE.Scene;
@@ -39,8 +39,8 @@ export class Thunderdome {
          *
          * premade scenes and (eventually) keeping physics separate
          */
-        this.dreams = dreams;
-        this.dream = new Dream(this, this.dreams.default.name, this.dreams.default.init);
+        this.dreams = DREAMS;
+        this.dream = new DREAMS.default(this);
         /**
          * camera controls and raycast picking
          *
