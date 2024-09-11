@@ -39,9 +39,6 @@ export default class Omni {
         this.controls.maxPolarAngle = Math.PI / 2;
 
         this._raycaster = new THREE.Raycaster();
-
-        // listeners
-        document.addEventListener('mousemove', this._onMouseMove.bind(this))
     }
 
     private _setPointer(clientX: number, clientY: number): void {
@@ -52,7 +49,7 @@ export default class Omni {
         this.raycaster.setFromCamera(this.pointer, this.camera)
     }
 
-    private _onMouseMove(event: MouseEvent): void {
+    onMouseMove(event: MouseEvent): void {
         this._setPointer(event.clientX, event.clientY);
         console.log(`x: ${this.pointer.x}\ny: ${this.pointer.y}`);
     }
