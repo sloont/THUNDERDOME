@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Thunderdome, THUNDERDOME_SIZE } from './Thunderdome';
-import { OrbitControls } from 'three/addons/controls/OrbitControls';
+import Orbit from './Orbit';
 
 export default class Omni {
     readonly thunderdome: Thunderdome;
@@ -16,12 +16,13 @@ export default class Omni {
     get pointer() {
         return this._pointer;
     }
-    controls: OrbitControls;
+    controls: Orbit;
 
     constructor(thunderdome: Thunderdome) {
         this.thunderdome = thunderdome;
         // TODO: extract camera creation to its own method so camera is configurable/swappable
         this._camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000 );
+        console.log(THREE.Controls);
         this._camera.position.set(
             THUNDERDOME_SIZE,
             THUNDERDOME_SIZE * 0.6,
@@ -30,7 +31,7 @@ export default class Omni {
         this._camera.lookAt(0, 0, 0);
 
         // orbit controls (camera)
-        this.controls = new OrbitControls(this.camera, thunderdome.renderer.domElement);
+        this.controls = new Orbit(this.camera, thunderdome.renderer.domElement);
         // this.controls.listenToKeyEvents(window)
 
         this.controls.screenSpacePanning = false;
