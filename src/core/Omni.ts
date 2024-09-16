@@ -22,7 +22,6 @@ export default class Omni {
         this.thunderdome = thunderdome;
         // TODO: extract camera creation to its own method so camera is configurable/swappable
         this._camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000 );
-        console.log(THREE.Controls);
         this._camera.position.set(
             THUNDERDOME_SIZE,
             THUNDERDOME_SIZE * 0.6,
@@ -52,6 +51,5 @@ export default class Omni {
 
     onMouseMove(event: MouseEvent): void {
         this._setPointer(event.clientX, event.clientY);
-        console.log(`x: ${this.pointer.x}\ny: ${this.pointer.y}`);
     }
 }

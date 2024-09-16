@@ -13,13 +13,14 @@ import {
     PerspectiveCamera,
     BaseEvent,
     EventDispatcher,
-    Matrix4
+    Matrix4,
+    Event
 } from 'three';
 
 interface OrbitEvents {
-    change: BaseEvent,
-    start: BaseEvent,
-    end: BaseEvent
+    change: {},
+    start: {},
+    end: {}
 }
 const _changeEvent: BaseEvent<keyof OrbitEvents> = { type: 'change' };
 const _startEvent: BaseEvent<keyof OrbitEvents> = { type: 'start' };
@@ -36,6 +37,13 @@ const _STATE = {
     ROTATE: 0,
     DOLLY: 1,
     PAN: 2,
+};
+
+// mouse button lookup
+const MOUSE_BUTTONS = {
+    LEFT: MOUSE.ROTATE,
+    MIDDLE: MOUSE.DOLLY,
+    RIGHT: MOUSE.PAN,
 };
 
 const _EPS = 0.000001;
@@ -100,19 +108,6 @@ export default class Orbit extends Controls<OrbitEvents> {
     autoRotate = false;
     // 30s/orbit @ 60fps
     autoRotateSpeed = 2.0;
-    // arrow key lookup
-    keys = {
-        LEFT: 'ArrowLeft',
-        UP: 'ArrowUp',
-        RIGHT: 'ArrowRight',
-        DOWN: 'ArrowDown',
-    };
-    // mouse button lookup
-    mouseButtons = {
-        LEFT: MOUSE.ROTATE,
-        MIDDLE: MOUSE.DOLLY,
-        RIGHT: MOUSE.PAN,
-    };
     // properties used for reset()
     target0: Vector3;
     position0: Vector3;
@@ -170,34 +165,26 @@ export default class Orbit extends Controls<OrbitEvents> {
         if (this.domElement !== null) {
             this.connect();
         }
-
-        // event listeners
-        this._onMouseMove = this._onMouseMove.bind(this);
-        this._onMouseDown = this._onMouseDown.bind(this);
-        this._onMouseUp = this._onMouseUp.bind(this);
-        this._onMouseWheel = this._onMouseWheel.bind(this);
-        this._onContextMenu = this._onContextMenu.bind(this);
-        this._interceptControlDown = this._interceptControlDown.bind(this);
-        this._interceptControlUp = this._interceptControlUp.bind(this);
     }
 
     connect(): void {
         if (!this.domElement) {
             return;
         }
-        this.domElement.addEventListener('mousedown', this._onMouseDown);
-        this.domElement.addEventListener('mouseup', this._onMouseUp);
-        this.domElement.addEventListener('contextmenu', this._onContextMenu);
+        this.domElement.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.domElement.addEventListener('mousedown', this.onMouseDown.bind(this));
+        this.domElement.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.domElement.addEventListener('contextmenu', this.onContextMenu.bind(this));
         this.domElement.addEventListener(
             'wheel',
-            this._onMouseWheel,
+            this.onMouseWheel.bind(this),
             { passive: false }
         );
         // offscreen canvas compatibility
         const document = this.domElement.getRootNode();
         document.addEventListener(
             'keydown',
-            this._interceptControlDown as EventListener,
+            this.interceptControlDown.bind(this) as EventListener,
             { passive: true, capture: true }
         );
         // no touch controls, but disable touch scroll
@@ -208,17 +195,17 @@ export default class Orbit extends Controls<OrbitEvents> {
         if (!this.domElement) {
             return;
         }
-        this.domElement.removeEventListener('mousedown', this._onMouseDown);
-        this.domElement.removeEventListener('mouseup', this._onMouseUp);
-        this.domElement.removeEventListener('mousemove', this._onMouseMove);
-        this.domElement.removeEventListener('wheel', this._onMouseWheel);
-        this.domElement.removeEventListener('contextmenu', this._onContextMenu);
+        this.domElement.removeEventListener('mousedown', this.onMouseDown);
+        this.domElement.removeEventListener('mouseup', this.onMouseUp);
+        this.domElement.removeEventListener('mousemove', this.onMouseMove);
+        this.domElement.removeEventListener('wheel', this.onMouseWheel);
+        this.domElement.removeEventListener('contextmenu', this.onContextMenu);
 
         // offscreen canvas compatibility
         const document = this.domElement.getRootNode();
         document.removeEventListener(
             'keydown',
-            this._interceptControlDown as EventListener,
+            this.interceptControlDown as EventListener,
             { capture: true }
         );
         // no touch controls, but re-enable touch scroll
@@ -580,7 +567,7 @@ export default class Orbit extends Controls<OrbitEvents> {
         this.update();
     }
 
-    private _customWheelEvent(event: WheelEvent): {
+    _customWheelEvent(event: WheelEvent): {
         clientX: number,
         clientY: number,
         deltaY: number
@@ -604,26 +591,30 @@ export default class Orbit extends Controls<OrbitEvents> {
         return newEvent;
     }
 
-    private _onMouseDown(event: MouseEvent): void {
+    onMouseDown(event: MouseEvent): void {
+        console.log(this);
         let mouseAction: number;
         switch (event.button) {
             case 0:
-                mouseAction = this.mouseButtons.LEFT;
+                mouseAction = MOUSE_BUTTONS.LEFT;
                 break;
             case 1:
-                mouseAction = this.mouseButtons.MIDDLE;
+                mouseAction = MOUSE_BUTTONS.MIDDLE;
                 break;
             case 2:
-                mouseAction = this.mouseButtons.RIGHT;
+                mouseAction = MOUSE_BUTTONS.RIGHT;
                 break;
             default:
                 mouseAction = -1;
         }
+
+        console.log(mouseAction);
         switch (mouseAction) {
             case MOUSE.DOLLY:
                 if (!this.enableDolly) {
                     return;
                 }
+                console.log('dolly');
                 this._handleMouseDownDolly(event);
                 this.state = _STATE.DOLLY;
                 break;
@@ -631,6 +622,7 @@ export default class Orbit extends Controls<OrbitEvents> {
                 if (!this.enableRotate) {
                     return;
                 }
+                console.log('rotate');
                 this._handleMouseDownRotate(event);
                 this.state = _STATE.ROTATE;
                 break;
@@ -638,6 +630,7 @@ export default class Orbit extends Controls<OrbitEvents> {
                 if (!this.enablePan) {
                     return;
                 }
+                console.log('pan');
                 this._handleMouseDownPan(event);
                 this.state = _STATE.PAN;
                 break;
@@ -646,25 +639,29 @@ export default class Orbit extends Controls<OrbitEvents> {
         }
 
         if (this.state !== _STATE.NONE) {
-            this.dispatchEvent(_startEvent)
+            console.log('mousedown');
+            this.dispatchEvent(_startEvent);
         }
     }
 
-    private _onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.state === _STATE.NONE) {
             return;
         }
+
         this.dispatchEvent(_endEvent);
         this.state = _STATE.NONE;
     }
 
-    private _onMouseMove(event: MouseEvent): void {
+    onMouseMove(event: MouseEvent): void {
+        console.log('mousemove');
         switch (this.state) {
             case _STATE.ROTATE:
                 if (!this.enableRotate) {
                     return;
                 }
                 this._handleMouseMoveRotate(event);
+                console.log('mousemove rotate');
                 break;
             case _STATE.DOLLY:
                 if (!this.enableDolly) {
@@ -681,7 +678,7 @@ export default class Orbit extends Controls<OrbitEvents> {
         }
     }
 
-    private _onMouseWheel(event: WheelEvent): void {
+    onMouseWheel(event: WheelEvent): void {
         if (
             !this.enabled ||
             !this.enableDolly ||
@@ -695,14 +692,14 @@ export default class Orbit extends Controls<OrbitEvents> {
         this.dispatchEvent(_endEvent);
     }
 
-    private _onContextMenu(event: MouseEvent): void {
+    private onContextMenu(event: MouseEvent): void {
         if (!this.enabled) {
             return;
         }
         event.preventDefault();
     }
 
-    private _interceptControlDown(event: KeyboardEvent): void{
+    interceptControlDown(event: KeyboardEvent): void{
         if (!this.domElement) {
             return;
         }
@@ -712,13 +709,13 @@ export default class Orbit extends Controls<OrbitEvents> {
             const document = this.domElement.getRootNode();
             document.addEventListener(
                 'keyup',
-                this._interceptControlUp as EventListener,
+                this.interceptControlUp as EventListener,
                 { passive: true, capture: true }
             );
         }
     }
 
-    private _interceptControlUp(event: KeyboardEvent): void {
+    interceptControlUp(event: KeyboardEvent): void {
         if (!this.domElement) {
             return;
         }
@@ -728,7 +725,7 @@ export default class Orbit extends Controls<OrbitEvents> {
             const document = this.domElement.getRootNode();
             document.removeEventListener(
                 'keyup',
-                this._interceptControlUp as EventListener,
+                this.interceptControlUp as EventListener,
                 { capture: true }
             );
         }
