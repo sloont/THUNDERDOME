@@ -5,7 +5,7 @@ export const THUNDERDOME_SIZE = THUNDERDOME_TILES * THUNDERDOME_TILE_SIZE;
 import * as THREE from 'three'
 import Omni from './Omni';
 import Dream from './Dream';
-import DREAMS from '../dreams/DREAMS';
+import DREAMS from '../dreams/dreams';
 
 
 

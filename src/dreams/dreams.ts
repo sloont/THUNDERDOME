@@ -1,4 +1,4 @@
-import * as TESTSPACE from './Testspace';
+import * as TESTSPACE from './testspace';
 const DefaultDream = TESTSPACE.Construct;
 
 const DREAMS = {

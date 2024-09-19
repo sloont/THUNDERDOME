@@ -8,13 +8,10 @@ import {
     Plane,
     Ray,
     MathUtils,
-    Camera,
     OrthographicCamera,
     PerspectiveCamera,
     BaseEvent,
-    EventDispatcher,
     Matrix4,
-    Event
 } from 'three';
 
 interface OrbitEvents {
@@ -61,6 +58,7 @@ const _EPS = 0.000001;
  *  - Zoom - middle mouse + ctrl
  *  - Pan - right mouse + ctrl
 */
+
 export default class Orbit extends Controls<OrbitEvents> {
     state = _STATE.NONE;
     // false disables these controls
@@ -592,7 +590,6 @@ export default class Orbit extends Controls<OrbitEvents> {
     }
 
     onMouseDown(event: MouseEvent): void {
-        console.log(this);
         let mouseAction: number;
         switch (event.button) {
             case 0:
@@ -608,10 +605,9 @@ export default class Orbit extends Controls<OrbitEvents> {
                 mouseAction = -1;
         }
 
-        console.log(mouseAction);
         switch (mouseAction) {
             case MOUSE.DOLLY:
-                if (!this.enableDolly) {
+                if (!event.ctrlKey || !this.enableDolly) {
                     return;
                 }
                 console.log('dolly');
@@ -619,7 +615,7 @@ export default class Orbit extends Controls<OrbitEvents> {
                 this.state = _STATE.DOLLY;
                 break;
             case MOUSE.ROTATE:
-                if (!this.enableRotate) {
+                if (!event.ctrlKey || !this.enableRotate) {
                     return;
                 }
                 console.log('rotate');
@@ -627,7 +623,7 @@ export default class Orbit extends Controls<OrbitEvents> {
                 this.state = _STATE.ROTATE;
                 break;
             case MOUSE.PAN:
-                if (!this.enablePan) {
+                if (!event.ctrlKey || !this.enablePan) {
                     return;
                 }
                 console.log('pan');
@@ -644,7 +640,7 @@ export default class Orbit extends Controls<OrbitEvents> {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(_event: MouseEvent): void {
         if (this.state === _STATE.NONE) {
             return;
         }
@@ -654,7 +650,9 @@ export default class Orbit extends Controls<OrbitEvents> {
     }
 
     onMouseMove(event: MouseEvent): void {
-        console.log('mousemove');
+        if (!event.ctrlKey) {
+            return;
+        }
         switch (this.state) {
             case _STATE.ROTATE:
                 if (!this.enableRotate) {
