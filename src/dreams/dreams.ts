@@ -1,9 +1,11 @@
 import * as TESTSPACE from './testspace';
-const DefaultDream = TESTSPACE.Construct;
+import * as BOXING from './boxing';
+const DefaultDream = BOXING.Boxing;
 
 const DREAMS = {
     default: DefaultDream,
-    [TESTSPACE.dreamId]: TESTSPACE.Construct,
+    [TESTSPACE.dreamId]: TESTSPACE.Testspace,
+    [BOXING.dreamId]: BOXING.Boxing,
 }
 
 export default DREAMS;

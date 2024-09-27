@@ -7,6 +7,11 @@ import Omni from './Omni';
 import Dream from './Dream';
 import DREAMS from '../dreams/dreams';
 
+export const THUNDERDOME_BLOCK_GEOMETRY = new THREE.BoxGeometry(
+    THUNDERDOME_TILE_SIZE,
+    THUNDERDOME_TILE_SIZE,
+    THUNDERDOME_TILE_SIZE
+);
 
 
 export class Thunderdome {

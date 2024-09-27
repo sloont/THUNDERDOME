@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three';
 import Dream from '../core/Dream';
 import {
     Thunderdome,
@@ -14,7 +14,7 @@ type BoxMesh = THREE.Mesh<THREE.BoxGeometry, THREE.Material, THREE.Object3DEvent
 
 
 export const dreamId = 'Testspace';
-class Testspace extends Dream {
+export class Testspace extends Dream {
     private _hoverables: THREE.Mesh[] = [];
     private _hoverBox: BoxMesh;
     private _activeGeometry: THREE.BoxGeometry;
@@ -196,4 +196,3 @@ class Testspace extends Dream {
         }
     }
 }
-export const Construct = Testspace;
